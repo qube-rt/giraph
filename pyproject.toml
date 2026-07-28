@@ -1,0 +1,33 @@
+[project]
+name = "giraph"
+version = "0.1.0"
+description = "Classify git merges as real changes vs transport noise, and render the decisions as a graph."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+giraph = "giraph.cli:main"
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "ruff>=0.15.22",
+    "ty>=0.0.62",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/giraph"]
+
+[tool.ruff]
+line-length = 110
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "TID252"]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
