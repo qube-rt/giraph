@@ -1,0 +1,22 @@
+# giraph configuration template. Copy to `giraph.toml` at your repo root
+# (or pass --config <path>). CLI flags override every value here.
+# All keys are optional and the built-in default is shown for each, but an
+# unrecognized key is an error rather than a silent no-op.
+
+[giraph]
+# A merge is "eligible" only if its diff touches one of these path prefixes.
+# Empty (the default) puts every path in scope: nothing is downgraded to ineligible.
+eligible_paths = ["src/", "lib/"]
+
+# A merge counts as a PR merge only if it targets one of these refs.
+accept_target_refs = ["main"]              # exact match;  default ["main"]
+accept_target_ref_prefixes = ["release/"]  # prefix match; default ["release/"]
+
+# Which merge-message format to parse: "plain" (default), "bitbucket", or "gitlab".
+convention = "bitbucket"
+
+# Hide graph clusters with no PR-matched merge (isolated "no PR" churn). Default false.
+drop_orphan_islands = false
+
+# Direction of the dashed "merged in" edge: "in" (into the merge, default) or "out" (to its tip).
+merged_in_arrow = "in"
