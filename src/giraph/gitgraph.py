@@ -52,20 +52,26 @@ class GitRepo:
         except OSError as exc:
             raise GiraphError(f"could not run git {' '.join(args)}: {exc}") from exc
 
-    def _run(self, *args: str, timeout: int = GIT_TIMEOUT, ok_codes: tuple[int, ...] = (0,)) -> str:
+    def _run(
+        self,
+        *args: str,
+        timeout: int = GIT_TIMEOUT,
+        ok_codes: tuple[int, ...] = (0,),
+        strip_output: bool = True,
+    ) -> str:
         result = self._exec(args, timeout)
         if result.returncode not in ok_codes:
             raise GiraphError(
                 f"git {' '.join(args)} failed with {result.returncode}: {result.stderr.strip()}"
             )
-        return result.stdout.strip()
+        return result.stdout.strip() if strip_output else result.stdout
 
     def _lines(self, *args: str) -> list[str]:
         return [line for line in self._run(*args).splitlines() if line]
 
     def _zlines(self, *args: str) -> list[str]:
         """Records of a ``-z`` command: NUL-separated, so paths are never C-quoted."""
-        return [field for field in self._run(*args).split("\0") if field]
+        return [field for field in self._run(*args, strip_output=False).split("\0") if field]
 
     def is_shallow(self) -> bool:
         return self._run("rev-parse", "--is-shallow-repository") == "true"
