@@ -72,6 +72,17 @@ def test_changed_paths_are_not_c_quoted(repo):
     assert GitRepo(repo).changed_paths("HEAD~1", "HEAD") == ["src/café.txt"]
 
 
+@pytest.mark.parametrize("name", [" leading.txt", "  spaced dir/file.txt", "normal.txt"])
+def test_changed_paths_preserve_leading_whitespace(repo, name):
+    path = repo / name
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text("new content")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "whitespace path")
+
+    assert GitRepo(repo).changed_paths("HEAD~1", "HEAD") == [name]
+
+
 def test_git_dir_in_the_environment_does_not_redirect_the_repo(repo, tmp_path, monkeypatch):
     other = tmp_path / "other"
     other.mkdir()
